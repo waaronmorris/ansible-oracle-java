@@ -2,8 +2,7 @@
 williamyeh.oracle-java for Ansible Galaxy
 ============
 
-
-[![Circle CI](https://circleci.com/gh/William-Yeh/ansible-oracle-java.svg?style=shield)](https://circleci.com/gh/William-Yeh/ansible-oracle-java) [![Build Status](https://travis-ci.org/William-Yeh/ansible-oracle-java.svg?branch=master)](https://travis-ci.org/William-Yeh/ansible-oracle-java)
+[![Build Status](https://travis-ci.org/William-Yeh/ansible-oracle-java.svg?branch=master)](https://travis-ci.org/William-Yeh/ansible-oracle-java) [![Circle CI](https://circleci.com/gh/William-Yeh/ansible-oracle-java.svg?style=shield)](https://circleci.com/gh/William-Yeh/ansible-oracle-java)
 
 ## Summary
 
@@ -12,9 +11,10 @@ Role name in Ansible Galaxy: **[williamyeh.oracle-java](https://galaxy.ansible.c
 This Ansible role has the following features for Oracle JDK:
 
  - Install JDK 7 or 8 version.
- - Install for CentOS and Debian/Ubuntu families.
+ - Install optional Java Cryptography Extensions (JCE)
+ - Install for CentOS, Debian/Ubuntu, and Mac OS X families.
 
-If you prefer OpenJDK, try alternatives such as [smola.java](https://galaxy.ansible.com/smola/java/) or [geerlingguy.java](https://galaxy.ansible.com/geerlingguy/java/).
+If you prefer OpenJDK, try alternatives such as [geerlingguy.java](https://galaxy.ansible.com/geerlingguy/java/) or [smola.java](https://galaxy.ansible.com/smola/java/).
 
 
 ## Role Variables
@@ -35,19 +35,45 @@ java_version: 8
 # which subversion?
 java_subversion: 77
 
-# which directory to put the download file (for CentOS families)?
+# which directory to put the download file?
 java_download_path: /tmp
 
 # rpm/tar.gz file location:
 #   - true: download from Oracle on-the-fly;
-#   - false: copy from `{{ playbook_dir }}/files`.
+#   - false: copy from `{{ playbook_dir }}/files` on the control machine.
 java_download_from_oracle: true
 
 # remove temporary downloaded files?
 java_remove_download: true
+
+# install JCE?
+java_install_jce: false
 ```
 
 For other configurable internals, read `tasks/set-role-variables.yml` file; for example, supported `java_version`/`java_subversion` combinations.
+
+
+### Customized variables, if absolutely necessary
+
+If you have a pre-downloaded `jdk_tarball_file` whose filename cannot be inferred successfully by `tasks/set-role-variables.yml`, you may specify it explicitly: 
+
+```yaml
+# Specify the pre-fetch filename (without tailing .tar.gz or .rpm or .dmg);
+# used in conjunction with `java_download_from_oracle: false`.
+
+jdk_tarball_file
+
+# For example, if you have a `files/jdk-7u79-linux-x64.tar.gz` locally,
+# but the filename cannot be inferred successfully by `tasks/set-role-variables.yml`,
+# you may specify the following variables in your playbook:
+#
+#    java_version:    7
+#    java_subversion: 79
+#    java_download_from_oracle: false
+#    jdk_tarball_file: jdk-7u79-linux-x64
+#
+```
+
 
 ## Usage
 
@@ -103,8 +129,6 @@ To do this, put the file on the `{{ playbook_dir }}/files` directory in advance,
 
 
 ## Dependencies
-
-None.
 
 
 ## License

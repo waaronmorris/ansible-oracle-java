@@ -1,4 +1,5 @@
-- hosts: all
+---
+- hosts: "{{ test_hosts|default('all') }}"
   become: yes
   become_method: sudo
   tasks:
@@ -9,3 +10,4 @@
   vars:
     #java_version: 8
     #java_subversion: 77
+    java_install_jce: true
